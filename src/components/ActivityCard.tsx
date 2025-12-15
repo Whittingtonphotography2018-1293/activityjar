@@ -8,6 +8,7 @@ interface ActivityCardProps {
   isFavorite: boolean;
   onToggleFavorite: () => void;
   onNewActivity: () => void;
+  isLoading?: boolean;
 }
 
 const locationLabels: Record<string, string> = {
@@ -34,6 +35,7 @@ export const ActivityCard = ({
   isFavorite,
   onToggleFavorite,
   onNewActivity,
+  isLoading = false,
 }: ActivityCardProps) => {
   const speakActivity = () => {
     if ('speechSynthesis' in window) {
@@ -138,10 +140,11 @@ export const ActivityCard = ({
 
           <button
             onClick={onNewActivity}
-            className="flex items-center gap-2 px-6 py-3 rounded-full gradient-button text-primary-foreground font-semibold shadow-button hover:shadow-[0_8px_25px_-5px_hsl(15_80%_50%_/_0.5)] transition-all duration-200"
+            disabled={isLoading}
+            className="flex items-center gap-2 px-6 py-3 rounded-full gradient-button text-primary-foreground font-semibold shadow-button hover:shadow-[0_8px_25px_-5px_hsl(15_80%_50%_/_0.5)] transition-all duration-200 disabled:opacity-60"
           >
-            <RefreshCw className="w-5 h-5" />
-            New Idea
+            <RefreshCw className={cn("w-5 h-5", isLoading && "animate-spin")} />
+            {isLoading ? 'Thinking...' : 'New Idea'}
           </button>
         </motion.div>
       </div>
