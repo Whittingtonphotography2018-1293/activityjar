@@ -6,14 +6,13 @@ import { ActivityCard } from '@/components/ActivityCard';
 import { FilterPanel } from '@/components/FilterPanel';
 import { FavoritesPanel } from '@/components/FavoritesPanel';
 import { useFavorites } from '@/hooks/useFavorites';
-import { Activity, Filters, getRandomActivity } from '@/data/activities';
+import { useAIActivity } from '@/hooks/useAIActivity';
+import { Activity, Filters } from '@/data/activities';
 
 const Index = () => {
   const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
-  const [isShaking, setIsShaking] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
-  const [recentActivityIds, setRecentActivityIds] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filters>({
     ageGroup: null,
     location: null,
@@ -22,31 +21,16 @@ const Index = () => {
   });
 
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
+  const { generateActivity, isLoading } = useAIActivity();
 
   const activeFiltersCount = Object.values(filters).filter(v => v !== null).length;
 
-  const getNewActivity = useCallback(() => {
-    setIsShaking(true);
-    
-    // Delay the activity change for visual effect
-    setTimeout(() => {
-      const newActivity = getRandomActivity(filters, recentActivityIds.slice(0, 5));
-      
-      if (newActivity) {
-        setCurrentActivity(newActivity);
-        setRecentActivityIds(prev => [newActivity.id, ...prev].slice(0, 10));
-      } else {
-        // If no activity found with current filters, try without excluding recent
-        const fallbackActivity = getRandomActivity(filters, []);
-        if (fallbackActivity) {
-          setCurrentActivity(fallbackActivity);
-          setRecentActivityIds([fallbackActivity.id]);
-        }
-      }
-      
-      setIsShaking(false);
-    }, 400);
-  }, [filters, recentActivityIds]);
+  const getNewActivity = useCallback(async () => {
+    const newActivity = await generateActivity(filters);
+    if (newActivity) {
+      setCurrentActivity(newActivity);
+    }
+  }, [filters, generateActivity]);
 
   const handleSelectActivity = (activity: Activity) => {
     setCurrentActivity(activity);
@@ -71,7 +55,7 @@ const Index = () => {
 
         const speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
 
-        if (speed > 2000) {
+        if (speed > 2000 && !isLoading) {
           getNewActivity();
         }
 
@@ -84,7 +68,7 @@ const Index = () => {
 
     window.addEventListener('devicemotion', handleMotion);
     return () => window.removeEventListener('devicemotion', handleMotion);
-  }, [getNewActivity]);
+  }, [getNewActivity, isLoading]);
 
   return (
     <div className="min-h-screen gradient-jar">
@@ -104,6 +88,7 @@ const Index = () => {
               isFavorite={isFavorite(currentActivity.id)}
               onToggleFavorite={() => toggleFavorite(currentActivity.id)}
               onNewActivity={getNewActivity}
+              isLoading={isLoading}
             />
           ) : (
             <motion.div
@@ -124,12 +109,12 @@ const Index = () => {
                   Bored? Not anymore!
                 </h2>
                 <p className="text-muted-foreground">
-                  Shake the jar or tap for instant fun
+                  AI creates unique activities just for you
                 </p>
               </motion.div>
 
               {/* Boredom Button */}
-              <BoredomButton onClick={getNewActivity} isShaking={isShaking} />
+              <BoredomButton onClick={getNewActivity} isShaking={isLoading} />
 
               {/* Hint text */}
               <motion.p
