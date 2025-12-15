@@ -6,25 +6,105 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Valid enum values for input validation
+const VALID_AGE_GROUPS = ['2-4', '5-7', '8-10', '11-13'];
+const VALID_LOCATIONS = ['indoor', 'outdoor', 'kitchen', 'travel'];
+const VALID_DURATIONS = ['5min', '15min', '30min'];
+const VALID_MATERIALS = ['none', 'household', 'craft'];
+const MAX_RECENT_ACTIVITIES = 10;
+const MAX_ACTIVITY_TITLE_LENGTH = 100;
+
+// Input validation functions
+function isValidString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+function isValidEnum(value: unknown, validValues: string[]): boolean {
+  return isValidString(value) && validValues.includes(value);
+}
+
+function validateFilters(filters: unknown): { ageGroup?: string; location?: string; duration?: string; materials?: string } | null {
+  if (!filters || typeof filters !== 'object') {
+    return {};
+  }
+  
+  const f = filters as Record<string, unknown>;
+  const validated: { ageGroup?: string; location?: string; duration?: string; materials?: string } = {};
+  
+  if (f.ageGroup !== null && f.ageGroup !== undefined) {
+    if (!isValidEnum(f.ageGroup, VALID_AGE_GROUPS)) {
+      return null;
+    }
+    validated.ageGroup = f.ageGroup as string;
+  }
+  
+  if (f.location !== null && f.location !== undefined) {
+    if (!isValidEnum(f.location, VALID_LOCATIONS)) {
+      return null;
+    }
+    validated.location = f.location as string;
+  }
+  
+  if (f.duration !== null && f.duration !== undefined) {
+    if (!isValidEnum(f.duration, VALID_DURATIONS)) {
+      return null;
+    }
+    validated.duration = f.duration as string;
+  }
+  
+  if (f.materials !== null && f.materials !== undefined) {
+    if (!isValidEnum(f.materials, VALID_MATERIALS)) {
+      return null;
+    }
+    validated.materials = f.materials as string;
+  }
+  
+  return validated;
+}
+
+function validateRecentActivities(activities: unknown): string[] {
+  if (!Array.isArray(activities)) {
+    return [];
+  }
+  
+  return activities
+    .slice(0, MAX_RECENT_ACTIVITIES)
+    .filter((item): item is string => isValidString(item))
+    .map(item => item.slice(0, MAX_ACTIVITY_TITLE_LENGTH).replace(/[<>{}]/g, ''));
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { filters, recentActivities } = await req.json();
+    const body = await req.json();
+    
+    // Validate input
+    const filters = validateFilters(body.filters);
+    if (filters === null) {
+      console.log("Invalid filter values received");
+      return new Response(JSON.stringify({ error: "Invalid filter values" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    
+    const recentActivities = validateRecentActivities(body.recentActivities);
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Build context from filters
+    // Build context from validated filters
     let filterContext = "";
-    if (filters?.ageGroup) filterContext += `Age group: ${filters.ageGroup} years old. `;
-    if (filters?.location) filterContext += `Location: ${filters.location}. `;
-    if (filters?.duration) filterContext += `Time available: ${filters.duration}. `;
-    if (filters?.materials) {
+    if (filters.ageGroup) filterContext += `Age group: ${filters.ageGroup} years old. `;
+    if (filters.location) filterContext += `Location: ${filters.location}. `;
+    if (filters.duration) filterContext += `Time available: ${filters.duration}. `;
+    if (filters.materials) {
       const materialsMap: Record<string, string> = {
         'none': 'no supplies needed',
         'household': 'common household items',
@@ -33,8 +113,8 @@ serve(async (req) => {
       filterContext += `Materials: ${materialsMap[filters.materials] || filters.materials}. `;
     }
 
-    // Avoid recent activities
-    const recentContext = recentActivities?.length > 0 
+    // Avoid recent activities (already sanitized)
+    const recentContext = recentActivities.length > 0 
       ? `Avoid activities similar to: ${recentActivities.slice(0, 3).join(', ')}.` 
       : '';
 
@@ -114,8 +194,8 @@ Remember: Respond ONLY with the JSON object, nothing else.`;
     activity.id = `ai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     // Ensure required fields have defaults
-    activity.ageGroups = filters?.ageGroup ? [filters.ageGroup] : ['2-4', '5-7', '8-10', '11-13'];
-    activity.locations = filters?.location ? [filters.location] : ['indoor'];
+    activity.ageGroups = filters.ageGroup ? [filters.ageGroup] : ['2-4', '5-7', '8-10', '11-13'];
+    activity.locations = filters.location ? [filters.location] : ['indoor'];
 
     return new Response(JSON.stringify({ activity }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
