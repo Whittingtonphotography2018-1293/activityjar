@@ -1,1 +1,10 @@
 project_id = "hgnnsohseadrsvizxsla"
+
+[functions.generate-activity]
+verify_jwt = false
+
+[functions.create-payment]
+verify_jwt = false
+
+[functions.verify-payment]
+verify_jwt = false
