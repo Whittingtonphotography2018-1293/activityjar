@@ -7,7 +7,7 @@
 @layer base {
   :root {
     /* Bright, playful color palette matching logo */
-    --background: 180 40% 97%;
+    --background: 0 0% 100%;
     --foreground: 220 25% 20%;
 
     --card: 0 0% 100%;
