@@ -1,6 +1,7 @@
 import { Heart, SlidersHorizontal } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Filters } from '@/data/activities';
+import logo from '@/assets/logo.png';
 
 interface HeaderProps {
   onOpenFilters: () => void;
@@ -22,17 +23,9 @@ export const Header = ({
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-2"
+          className="flex items-center"
         >
-          <span className="text-2xl">🫙</span>
-          <div>
-            <h1 className="text-lg font-bold text-foreground leading-tight">
-              Activity Jar
-            </h1>
-            <p className="text-xs text-muted-foreground -mt-0.5">
-              Instant fun ideas
-            </p>
-          </div>
+          <img src={logo} alt="Activity Jar" className="h-12 w-auto" />
         </motion.div>
 
         {/* Actions */}
