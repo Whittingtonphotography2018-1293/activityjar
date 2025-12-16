@@ -1,11 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Trash2 } from 'lucide-react';
-import { activities, Activity } from '@/data/activities';
+import { Activity } from '@/data/activities';
 
 interface FavoritesPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  favoriteIds: string[];
+  favorites: Activity[];
   onRemoveFavorite: (id: string) => void;
   onSelectActivity: (activity: Activity) => void;
 }
@@ -13,12 +13,10 @@ interface FavoritesPanelProps {
 export const FavoritesPanel = ({
   isOpen,
   onClose,
-  favoriteIds,
+  favorites,
   onRemoveFavorite,
   onSelectActivity,
 }: FavoritesPanelProps) => {
-  const favoriteActivities = activities.filter(a => favoriteIds.includes(a.id));
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -46,7 +44,7 @@ export const FavoritesPanel = ({
                 <Heart className="w-5 h-5 text-primary fill-primary" />
                 <h2 className="text-xl font-bold text-foreground">Favorites</h2>
                 <span className="text-sm text-muted-foreground">
-                  ({favoriteActivities.length})
+                  ({favorites.length})
                 </span>
               </div>
               <button
@@ -59,7 +57,7 @@ export const FavoritesPanel = ({
 
             {/* Content */}
             <div className="p-6">
-              {favoriteActivities.length === 0 ? (
+              {favorites.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">💝</div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">
@@ -71,7 +69,7 @@ export const FavoritesPanel = ({
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {favoriteActivities.map((activity, index) => (
+                  {favorites.map((activity, index) => (
                     <motion.div
                       key={activity.id}
                       initial={{ opacity: 0, x: 20 }}

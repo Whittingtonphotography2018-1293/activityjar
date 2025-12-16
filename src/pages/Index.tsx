@@ -20,7 +20,7 @@ const Index = () => {
     materials: null,
   });
 
-  const { favorites, toggleFavorite, isFavorite } = useFavorites();
+  const { favorites, toggleFavorite, removeFavorite, isFavorite } = useFavorites();
   const { generateActivity, isLoading } = useAIActivity();
 
   const activeFiltersCount = Object.values(filters).filter(v => v !== null).length;
@@ -86,7 +86,7 @@ const Index = () => {
               key={currentActivity.id}
               activity={currentActivity}
               isFavorite={isFavorite(currentActivity.id)}
-              onToggleFavorite={() => toggleFavorite(currentActivity.id)}
+              onToggleFavorite={() => toggleFavorite(currentActivity)}
               onNewActivity={getNewActivity}
               isLoading={isLoading}
             />
@@ -187,8 +187,8 @@ const Index = () => {
       <FavoritesPanel
         isOpen={showFavorites}
         onClose={() => setShowFavorites(false)}
-        favoriteIds={favorites}
-        onRemoveFavorite={toggleFavorite}
+        favorites={favorites}
+        onRemoveFavorite={removeFavorite}
         onSelectActivity={handleSelectActivity}
       />
     </div>
