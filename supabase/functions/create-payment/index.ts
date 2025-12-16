@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const PRICE_ID = "price_1SezPIIOXLDJlkXXvNhQNYGV";
+const PRICE_ID = "price_1Sf0JTKgn1iCzvzBiE6wQT20";
 
 serve(async (req) => {
   // Handle CORS preflight requests
