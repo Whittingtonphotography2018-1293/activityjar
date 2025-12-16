@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, Check, Loader2, RotateCcw } from 'lucide-react';
@@ -11,15 +11,14 @@ import logo from '@/assets/logo.png';
 const Payment = () => {
   const [loading, setLoading] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const { user, hasPurchased, signOut, refreshPurchaseStatus } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // If already purchased, redirect to main app
-  if (hasPurchased === true) {
-    navigate('/');
-    return null;
-  }
+  useEffect(() => {
+    if (hasPurchased === true) navigate('/');
+  }, [hasPurchased, navigate]);
 
   const handlePayment = async () => {
     setLoading(true);
@@ -32,8 +31,23 @@ const Payment = () => {
       }
 
       if (data?.url) {
-        // Navigate directly to Stripe Checkout
-        window.location.href = data.url;
+        setCheckoutUrl(data.url);
+
+        // Stripe can't reliably render inside the Lovable preview iframe.
+        // Try to open a new tab; if blocked, show an in-app "Continue" button.
+        const opened = window.open(data.url, '_blank', 'noopener,noreferrer');
+
+        if (!opened) {
+          toast({
+            title: 'Checkout link ready',
+            description: 'Popups are blocked here—use the button below to open Stripe Checkout.',
+          });
+        } else {
+          toast({
+            title: 'Checkout opened',
+            description: 'Complete payment in the new tab, then return here.',
+          });
+        }
       } else {
         throw new Error('No checkout URL received');
       }
@@ -143,9 +157,17 @@ const Payment = () => {
             ) : (
               'Unlock Now'
             )}
-          </Button>
+           </Button>
 
-          {/* Restore Purchase Button */}
+           {checkoutUrl && !loading && (
+             <Button asChild variant="secondary" className="w-full mt-3">
+               <a href={checkoutUrl} target="_blank" rel="noreferrer">
+                 Continue to Checkout
+               </a>
+             </Button>
+           )}
+
+           {/* Restore Purchase Button */}
           <Button
             onClick={handleRestorePurchase}
             disabled={loading || restoring}
