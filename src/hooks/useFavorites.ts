@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Activity } from '@/data/activities';
 
 const FAVORITES_KEY = 'activity-jar-favorites';
 
 export const useFavorites = () => {
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<Activity[]>([]);
 
   useEffect(() => {
     const stored = localStorage.getItem(FAVORITES_KEY);
@@ -16,19 +17,28 @@ export const useFavorites = () => {
     }
   }, []);
 
-  const toggleFavorite = useCallback((activityId: string) => {
+  const toggleFavorite = useCallback((activity: Activity) => {
     setFavorites(prev => {
-      const newFavorites = prev.includes(activityId)
-        ? prev.filter(id => id !== activityId)
-        : [...prev, activityId];
+      const exists = prev.some(a => a.id === activity.id);
+      const newFavorites = exists
+        ? prev.filter(a => a.id !== activity.id)
+        : [...prev, activity];
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
+      return newFavorites;
+    });
+  }, []);
+
+  const removeFavorite = useCallback((activityId: string) => {
+    setFavorites(prev => {
+      const newFavorites = prev.filter(a => a.id !== activityId);
       localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
       return newFavorites;
     });
   }, []);
 
   const isFavorite = useCallback((activityId: string) => {
-    return favorites.includes(activityId);
+    return favorites.some(a => a.id === activityId);
   }, [favorites]);
 
-  return { favorites, toggleFavorite, isFavorite };
+  return { favorites, toggleFavorite, removeFavorite, isFavorite };
 };
