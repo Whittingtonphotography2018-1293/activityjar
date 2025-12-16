@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, Check, Loader2 } from 'lucide-react';
+import { Sparkles, Check, Loader2, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,7 +10,8 @@ import logo from '@/assets/logo.png';
 
 const Payment = () => {
   const [loading, setLoading] = useState(false);
-  const { user, hasPurchased, signOut } = useAuth();
+  const [restoring, setRestoring] = useState(false);
+  const { user, hasPurchased, signOut, refreshPurchaseStatus } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -44,6 +45,28 @@ const Payment = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRestorePurchase = async () => {
+    setRestoring(true);
+    try {
+      await refreshPurchaseStatus();
+      // Small delay to allow state to update
+      await new Promise(resolve => setTimeout(resolve, 500));
+      toast({
+        title: 'Purchase Check Complete',
+        description: hasPurchased ? 'Your purchase has been restored!' : 'No previous purchase found.',
+      });
+    } catch (error) {
+      console.error('Restore error:', error);
+      toast({
+        title: 'Restore Failed',
+        description: 'Unable to check purchase status. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setRestoring(false);
     }
   };
 
@@ -111,7 +134,7 @@ const Payment = () => {
           {/* Payment Button */}
           <Button
             onClick={handlePayment}
-            disabled={loading}
+            disabled={loading || restoring}
             className="w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg"
           >
             {loading ? (
@@ -119,6 +142,21 @@ const Payment = () => {
             ) : (
               'Unlock Now'
             )}
+          </Button>
+
+          {/* Restore Purchase Button */}
+          <Button
+            onClick={handleRestorePurchase}
+            disabled={loading || restoring}
+            variant="ghost"
+            className="w-full mt-3 text-muted-foreground hover:text-foreground"
+          >
+            {restoring ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : (
+              <RotateCcw className="w-4 h-4 mr-2" />
+            )}
+            Restore Purchase
           </Button>
 
           {/* User info */}
