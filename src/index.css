@@ -6,58 +6,58 @@
 
 @layer base {
   :root {
-    /* Warm, playful color palette */
-    --background: 30 100% 97%;
-    --foreground: 20 30% 20%;
+    /* Bright, playful color palette matching logo */
+    --background: 180 40% 97%;
+    --foreground: 220 25% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 20 30% 20%;
+    --card-foreground: 220 25% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 20 30% 20%;
+    --popover-foreground: 220 25% 20%;
 
-    /* Coral/peach primary - warm and inviting */
-    --primary: 15 90% 65%;
+    /* Vibrant pink primary - from logo */
+    --primary: 330 85% 60%;
     --primary-foreground: 0 0% 100%;
 
-    /* Soft mint secondary */
-    --secondary: 160 45% 90%;
-    --secondary-foreground: 160 40% 30%;
+    /* Fresh green secondary - from logo */
+    --secondary: 120 60% 85%;
+    --secondary-foreground: 120 50% 25%;
 
-    /* Muted warm tones */
-    --muted: 30 30% 92%;
-    --muted-foreground: 20 15% 45%;
+    /* Soft cyan muted tones */
+    --muted: 180 30% 92%;
+    --muted-foreground: 200 15% 45%;
 
-    /* Sunny yellow accent */
-    --accent: 45 95% 65%;
-    --accent-foreground: 45 80% 20%;
+    /* Orange accent - from logo */
+    --accent: 35 95% 55%;
+    --accent-foreground: 35 90% 15%;
 
     /* Soft red for destructive */
     --destructive: 0 70% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 25% 88%;
-    --input: 30 25% 88%;
-    --ring: 15 90% 65%;
+    --border: 180 20% 88%;
+    --input: 180 20% 88%;
+    --ring: 330 85% 60%;
 
     --radius: 1rem;
 
-    /* Custom activity colors */
-    --activity-indoor: 260 70% 75%;
-    --activity-outdoor: 140 60% 60%;
-    --activity-kitchen: 30 80% 65%;
-    --activity-travel: 200 70% 65%;
+    /* Custom activity colors - matching logo palette */
+    --activity-indoor: 330 70% 70%;
+    --activity-outdoor: 120 60% 55%;
+    --activity-kitchen: 35 85% 60%;
+    --activity-travel: 200 75% 55%;
 
-    /* Gradients */
-    --gradient-jar: linear-gradient(135deg, hsl(30, 100%, 95%) 0%, hsl(15, 80%, 90%) 50%, hsl(350, 70%, 92%) 100%);
-    --gradient-button: linear-gradient(145deg, hsl(15, 90%, 65%) 0%, hsl(350, 85%, 60%) 100%);
-    --gradient-button-hover: linear-gradient(145deg, hsl(15, 95%, 60%) 0%, hsl(350, 90%, 55%) 100%);
+    /* Gradients - using logo colors */
+    --gradient-jar: linear-gradient(135deg, hsl(180, 40%, 97%) 0%, hsl(200, 60%, 95%) 50%, hsl(330, 50%, 95%) 100%);
+    --gradient-button: linear-gradient(145deg, hsl(330, 85%, 60%) 0%, hsl(350, 80%, 55%) 100%);
+    --gradient-button-hover: linear-gradient(145deg, hsl(330, 90%, 55%) 0%, hsl(350, 85%, 50%) 100%);
 
     /* Shadows */
-    --shadow-soft: 0 4px 20px -4px hsl(15 50% 50% / 0.15);
-    --shadow-button: 0 8px 30px -8px hsl(15 80% 50% / 0.4);
-    --shadow-button-active: 0 4px 15px -4px hsl(15 80% 50% / 0.5);
-    --shadow-card: 0 10px 40px -10px hsl(20 30% 30% / 0.1);
+    --shadow-soft: 0 4px 20px -4px hsl(200 50% 50% / 0.15);
+    --shadow-button: 0 8px 30px -8px hsl(330 80% 50% / 0.4);
+    --shadow-button-active: 0 4px 15px -4px hsl(330 80% 50% / 0.5);
+    --shadow-card: 0 10px 40px -10px hsl(200 30% 30% / 0.1);
 
     /* Sidebar defaults */
     --sidebar-background: 0 0% 98%;
@@ -71,36 +71,36 @@
   }
 
   .dark {
-    --background: 20 25% 12%;
-    --foreground: 30 20% 95%;
+    --background: 210 25% 10%;
+    --foreground: 180 20% 95%;
 
-    --card: 20 20% 16%;
-    --card-foreground: 30 20% 95%;
+    --card: 210 20% 14%;
+    --card-foreground: 180 20% 95%;
 
-    --popover: 20 20% 16%;
-    --popover-foreground: 30 20% 95%;
+    --popover: 210 20% 14%;
+    --popover-foreground: 180 20% 95%;
 
-    --primary: 15 85% 60%;
+    --primary: 330 80% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 160 30% 25%;
-    --secondary-foreground: 160 40% 85%;
+    --secondary: 120 40% 25%;
+    --secondary-foreground: 120 50% 85%;
 
-    --muted: 20 15% 22%;
-    --muted-foreground: 20 10% 60%;
+    --muted: 210 15% 20%;
+    --muted-foreground: 200 10% 60%;
 
-    --accent: 45 80% 55%;
-    --accent-foreground: 45 90% 10%;
+    --accent: 35 75% 50%;
+    --accent-foreground: 35 90% 95%;
 
     --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 20 15% 25%;
-    --input: 20 15% 25%;
-    --ring: 15 85% 60%;
+    --border: 210 15% 22%;
+    --input: 210 15% 22%;
+    --ring: 330 80% 55%;
 
-    --gradient-jar: linear-gradient(135deg, hsl(20, 25%, 15%) 0%, hsl(15, 30%, 18%) 50%, hsl(350, 25%, 16%) 100%);
-    --gradient-button: linear-gradient(145deg, hsl(15, 85%, 55%) 0%, hsl(350, 80%, 50%) 100%);
+    --gradient-jar: linear-gradient(135deg, hsl(210, 25%, 12%) 0%, hsl(200, 30%, 15%) 50%, hsl(330, 25%, 14%) 100%);
+    --gradient-button: linear-gradient(145deg, hsl(330, 80%, 50%) 0%, hsl(350, 75%, 45%) 100%);
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
