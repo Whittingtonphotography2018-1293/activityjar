@@ -32,7 +32,17 @@ const Payment = () => {
       }
 
       if (data?.url) {
-        window.location.href = data.url;
+        const opened = window.open(data.url, '_blank', 'noopener,noreferrer');
+
+        // If popups are blocked, fall back to same-tab navigation.
+        if (!opened) {
+          window.location.href = data.url;
+        } else {
+          toast({
+            title: 'Checkout opened',
+            description: 'Complete payment in the new tab, then return here.',
+          });
+        }
       } else {
         throw new Error('No checkout URL received');
       }
