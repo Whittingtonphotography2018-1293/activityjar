@@ -17,7 +17,7 @@ export const Header = ({
   activeFiltersCount,
 }: HeaderProps) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 px-4 py-3 bg-background/80 backdrop-blur-md">
+    <header className="fixed top-0 left-0 right-0 z-30 px-4 py-3 bg-card/95 backdrop-blur-md">
       <div className="max-w-md mx-auto flex items-center justify-between">
         {/* Logo */}
         <motion.div
