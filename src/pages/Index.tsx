@@ -71,7 +71,7 @@ const Index = () => {
   }, [getNewActivity, isLoading]);
 
   return (
-    <div className="min-h-screen gradient-jar">
+    <div className="min-h-screen bg-background">
       <Header
         onOpenFilters={() => setShowFilters(true)}
         onOpenFavorites={() => setShowFavorites(true)}
